@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"appId": "frontend",
+			"appPort": 8080,
+			"httpPort": 3500,
+			"grpcPort": 50001,
+			"metricsPort": 9090,
+			"label": "daprd-debug-front",
+			"type": "daprd"
+		},
+		{
+			"appId": "frontend",
+			"label": "daprd-down-front",
+			"type": "daprd-down"
+		},
+		{
+			"appId": "backend",
+			"appPort": 8888,
+			"httpPort": 3501,
+			"grpcPort": 50002,
+			"metricsPort": 9091,
+			"componentsPath": "${workspaceFolder}/backend/components/state",
+			"label": "daprd-debug-back",
+			"type": "daprd"
+		},
+		{
+			"appId": "backend",
+			"label": "daprd-down-back",
+			"type": "daprd-down"
+		}
+	]
+}

@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "All Java Dapr App",
+            "configurations": [
+                "FrontEnd Java Program with Dapr",
+                "BackEnd Java Program with Dapr"
+            ],
+            "presentation": {
+                "hidden": false,
+                "group": "",
+                "order": 1
+            }
+        }
+    ],
+    "configurations": [
+        {
+            "type": "java",
+            "name": "FrontEnd Java Program with Dapr",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/frontend",
+            "mainClass": "com.example.dapr.frontend.FrontEndApplication",
+            "args": "--server.port=8080",
+            "preLaunchTask": "daprd-debug-front",
+            "postDebugTask": "daprd-down-front"
+        },
+        {
+            "type": "java",
+            "name": "BackEnd Java Program with Dapr",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/backend",
+            "mainClass": "com.example.dapr.backend.BackEndApplication",
+            "args": "--server.port=8888",
+            "preLaunchTask": "daprd-debug-back",
+            "postDebugTask": "daprd-down-back"
+        }
+    ]
+}
