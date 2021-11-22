@@ -16,6 +16,7 @@ public class FrontEndController {
 
     @GetMapping("/")
     public String root() {
+        log.info("OK");
         return "OK";
     }
 
