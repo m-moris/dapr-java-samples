@@ -6,3 +6,9 @@ help: ## show this message
 all:
 	(cd frontend && mvn clean package) && \
 	(cd backend  && mvn clean package)
+
+images:
+	docker-compose build
+
+push:
+	docker-compose push

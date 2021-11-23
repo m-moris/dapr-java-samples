@@ -19,17 +19,19 @@ public class BackEndController {
     private String STATE_STORE = "statestore";
     private String KEY = "count";
 
+    private static int WAIT_FOR_SIDECAR = 10000;
+
     @PostConstruct()
     public void postconstruct() {
         log.info("Initializing state sotre");
         try (DaprClient client = new DaprClientBuilder().build()) {
-            client.waitForSidecar(100000).block();
+            client.waitForSidecar(WAIT_FOR_SIDECAR).block();
             Counter counter = client.getState(STATE_STORE, KEY, Counter.class).block().getValue();
             if (counter == null) {
                 client.saveState(STATE_STORE, KEY, new Counter()).block();
             }
         } catch (Exception e) {
-            log.error("build errror", e);
+            log.error("post construction errror", e);
             throw new RuntimeException(e);
         }
     }
@@ -39,15 +41,13 @@ public class BackEndController {
         log.info("invoked");
         String message = body == null ? "" : new String(body, StandardCharsets.UTF_8);
         try (DaprClient client = new DaprClientBuilder().build()) {
-            client.waitForSidecar(10000).block();
+            client.waitForSidecar(WAIT_FOR_SIDECAR).block();
             Counter counter = client.getState(STATE_STORE, KEY, Counter.class).block().getValue();
-            log.info("prev counter = " + counter.getValue());
             counter.increment();
             client.saveState(STATE_STORE, KEY, counter).block();
-            log.info("after counter = " + counter.getValue());
             return String.format("Hello %s from backend service. count = %d\n", message, counter.getValue());
         } catch (Exception e) {
-            log.error("build errror", e);
+            log.error("say errror", e);
             throw new RuntimeException(e);
         }
     }
