@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  backend:
+    image: morisacr.azurecr.io/dapr-sample-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8080"
+  frontend:
+    image: morisacr.azurecr.io/dapr-sample-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
