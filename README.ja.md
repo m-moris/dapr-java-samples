@@ -1,8 +1,6 @@
 # dapr sample for java
 
-[日本語 (Japanese)](./README.ja.md)
-
-This is a simple sample that receives HTTP communication from outside the company at the Frontend (Spring Boot) and passes it to the BackEnd (Spring Booot). It uses a State Store to maintain state.
+外部からの HTTP通信を、Frontend (Spring Boot) で受けて、BackEnd (Spring Booot) に流す簡単なサンプルです。状態を保持するState Store を使っています。
 
 ```
 +-------------+        +-------------+
@@ -12,19 +10,18 @@ This is a simple sample that receives HTTP communication from outside the compan
 
 ## Dapr
 
-Install Dapr CLI.
+Dapr CLI をインストールする。
 
 [Install the Dapr CLI | Dapr Docs](https://docs.dapr.io/getting-started/install-dapr-cli/)
 
-When reconfiguring the environment, uninstall and then initialize.
+環境を再設定するときは、アンインストールしてから初期化する。
 
 ```sh
 dapr unisntall --all
 dapr init
 ```
 
-Do a `docker ps` and if you see the following, you are good to go.
-
+`docker ps` して、以下が表示されれば問題なし。
 
 ```sh
 $ docker ps
@@ -34,13 +31,11 @@ be8a72b20325   daprio/dapr:1.5.0   "./placement"            14 seconds ago   Up 
 0c08eafb6574   openzipkin/zipkin   "start-zipkin"           14 seconds ago   Up 12 seconds (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
 ```
 
-## Local execution
+## ローカル実行
 
-1. Build with `make all`
-2. Run `run1.sh` and `run2.sh`, respectively.
-3. State Store uses `redis`.
+`make all` でビルドしてから、`run1.sh` と `run2.sh` をそれぞれ実行する。State Store は `redis` が使われる。
 
-The scripts are as follows, respectively.
+スクリプトの内容はそれぞれ以下の通り。
 
 **frontend**
 
@@ -60,18 +55,16 @@ dapr run --app-id backend --app-port 8888 --dapr-http-port 3501 \
 
 ## Container App
 
-### Build container images
+### コンテナイメージのビルド
 
-1. Rename the image in `docker-compose.yml` appropriately and build the image with `make all images`. Then, register it in your container registry.
-2. For Azure Container Registry, login with `az acr login --name myregistry` and `make push`.
+1. `docker-compose.yml` でイメージ名は適当に変更し、`make all images` し、自分のコンテナレジストリに登録する。
+2. Azure Container Registry なら、`az acr login --name myregistry` でログイン後、`make push` する。
 
-### Execution
+### 実行
 
-See the following link on how to do this in `containerapps`.
+`containerapps` での実行方法で、基本的には [チュートリアル: Azure CLI を使用して Dapr アプリケーションを Azure Container Apps にデプロイする | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/container-apps/microservices-dapr?tabs=bash) を参考のこと。
 
-[Tutorial: Deploy a Dapr application to Azure Container Apps using the Azure CLI | Microsoft Docs](https://docs.microsoft.com/en-us/azure/container-apps/microservices-dapr?tabs=bash)
-
-Prepare a BLOB as a State Store and write the account name, key and container in `backend\components\storage.yaml`. This is used when deploying.
+State Store としてBLOBを用意し、`backend\components\storage.yaml` に、アカウント名、キー、コンテナを記述する。デプロイ時に使用する。
 
 ```sh
 az storage account create \
@@ -82,7 +75,8 @@ az storage account create \
   --kind StorageV2
 ```
 
-After creating a container environment, deploy it with the following command.
+コンテナ環境を作成したあと、以下のコマンドでデプロイする。
+
 
 **backend**
 
