@@ -58,6 +58,12 @@ dapr run --app-id backend --app-port 8888 --dapr-http-port 3501 \
   -- java -jar backend/target/backend-0.0.1-SNAPSHOT.jar com.example.dapr.backend.BackEndApplication --server.port=8888
 ```
 
+**run locally**
+
+```zsh
+curl http://localhost:8080/test?name=dapr
+```
+
 ## Container App
 
 ### Build container images
