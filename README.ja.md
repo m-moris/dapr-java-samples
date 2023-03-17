@@ -1,5 +1,14 @@
 # dapr sample for java
 
+### Updates
+
+- Update dapr verison 1.5.0 to 1.8.0
+- Update Java version 11 to 17
+- Update Spring Boot version
+
+
+## 概要
+
 外部からの HTTP通信を、Frontend (Spring Boot) で受けて、BackEnd (Spring Booot) に流す簡単なサンプルです。状態を保持するState Store を使っています。
 
 ```

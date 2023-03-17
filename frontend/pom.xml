@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.8</version>
+        <version>2.7.9</version>
         <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
@@ -15,8 +15,8 @@
     <name>frontend</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>11</java.version>
-        <dapr.version>1.5.0</dapr.version>
+        <java.version>17</java.version>
+        <dapr.version>1.8.0</dapr.version>
     </properties>
     <dependencies>
         <dependency>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.9.0</version>
+            <version>4.9.3</version>
         </dependency>
 
         <dependency>
