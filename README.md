@@ -2,6 +2,14 @@
 
 [日本語 (Japanese)](./README.ja.md)
 
+### Updates
+
+- Update dapr verison 1.5.0 to 1.8.0
+- Update Java version 11 to 17
+- Update Spring Boot version
+
+## Intro
+
 This is a simple sample that receives HTTP communication from outside the company at the Frontend (Spring Boot) and passes it to the BackEnd (Spring Booot). It uses a State Store to maintain state.
 
 ```
