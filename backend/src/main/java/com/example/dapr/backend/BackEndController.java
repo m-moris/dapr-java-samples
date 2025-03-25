@@ -2,7 +2,7 @@ package com.example.dapr.backend;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +35,7 @@ public class BackEndController {
             throw new RuntimeException(e);
         }
     }
+
 
     @PostMapping("say")
     public String say(@RequestBody(required = false) byte[] body) {

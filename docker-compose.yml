@@ -1,17 +1,83 @@
-version: '3.8'
-
 services:
   backend:
+    container_name: backend
     image: morisacr.azurecr.io/dapr-sample-backend
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     ports:
-      - "8888:8080"
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+    networks:
+      - dapr-network
+    depends_on:
+      - redis
+      - placement
+  backend-dapr:
+    container_name: backend-dapr
+    image: daprio/daprd:edge
+    command: [ 
+      "./daprd", 
+      "--app-id", "backend", 
+      "--app-port", "8081", 
+      "--placement-host-address", "placement:50006", 
+      "--dapr-http-port", "3500",
+      "--dapr-grpc-port", "50001",
+      "--resources-path", "./components" 
+      ]
+    volumes:
+      - "./backend/components/dev-dapr:/components"
+    network_mode: "service:backend"
+    depends_on:
+      - backend
   frontend:
+    container_name: frontend
     image: morisacr.azurecr.io/dapr-sample-frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - dapr-network
+    depends_on:
+      - placement
+      - redis
+  frontend-dapr:
+    container_name: frontend-dapr
+    image: daprio/daprd:edge
+    command: [ 
+      "./daprd", 
+      "--log-level", "debug",
+      "--app-id", "frontend", 
+      "--app-port", "8080", 
+      "--dapr-http-port", "3500",
+      "--dapr-grpc-port", "50001",
+      "--placement-host-address", "placement:50006", 
+      "--resources-path", "./components" ]
+    volumes:
+      - "./frontend/components/dev-dapr:/components"
+    network_mode: "service:frontend"
+    depends_on:
+      - frontend
+  placement:
+    container_name: placement
+    image: "daprio/dapr"
+    command: [ "./placement", "--port", "50006", "--log-level" , "debug" ]
+    ports:
+      - "50006:50006"
+    networks:
+      - dapr-network
+  redis:
+    container_name: redis
+    image: "redis"
+    ports:
+      - "6379:6379"
+    networks:
+      - dapr-network
+  zipkin:
+    container_name: zipkin
+    image: "openzipkin/zipkin"
+    ports:
+      - "9411:9411"
+    networks:
+      - dapr-network
+
+networks:
+  dapr-network:
+    driver: bridge
