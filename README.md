@@ -2,11 +2,12 @@
 
 [日本語 (Japanese)](./README.ja.md)
 
-### Updates
+### Updates 2025-03-25
 
-- Update dapr verison 1.5.0 to 1.8.0
-- Update Java version 11 to 17
+- Update dapr verison 1.15
+- Update Java version 17 to 21
 - Update Spring Boot version
+- Update dependencies
 
 ## Intro
 
@@ -70,6 +71,15 @@ dapr run --app-id backend --app-port 8888 --dapr-http-port 3501 \
 
 ```zsh
 curl http://localhost:8080/test?name=dapr
+```
+
+## Run in Docker Compose
+
+```sh
+make build-local
+docker compose up -d
+curl http://localhost:8080/test?name=dapr
+docker compose down
 ```
 
 ## Container App
