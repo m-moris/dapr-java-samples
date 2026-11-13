@@ -13,7 +13,7 @@ services:
       - placement
   backend-dapr:
     container_name: backend-dapr
-    image: daprio/daprd:edge
+    image: daprio/daprd:1.19.1
     command: [ 
       "./daprd", 
       "--app-id", "backend", 
@@ -40,7 +40,7 @@ services:
       - redis
   frontend-dapr:
     container_name: frontend-dapr
-    image: daprio/daprd:edge
+    image: daprio/daprd:1.19.1
     command: [ 
       "./daprd", 
       "--log-level", "debug",
@@ -57,7 +57,7 @@ services:
       - frontend
   placement:
     container_name: placement
-    image: "daprio/dapr"
+    image: "daprio/dapr:1.19.1"
     command: [ "./placement", "--port", "50006", "--log-level" , "debug" ]
     ports:
       - "50006:50006"
@@ -65,14 +65,14 @@ services:
       - dapr-network
   redis:
     container_name: redis
-    image: "redis"
+    image: "redis:8.10.3"
     ports:
       - "6379:6379"
     networks:
       - dapr-network
   zipkin:
     container_name: zipkin
-    image: "openzipkin/zipkin"
+    image: "openzipkin/zipkin:3.6.1"
     ports:
       - "9411:9411"
     networks:

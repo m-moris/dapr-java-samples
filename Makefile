@@ -8,7 +8,7 @@ all: ## build all
 	(cd backend  && mvn clean package)
 
 push: ## push images to registry
-	docker-compose push
+	docker compose push backend frontend
 
 build-local: ## build local images
 	cd backend  && docker build -t morisacr.azurecr.io/dapr-sample-backend:latest .

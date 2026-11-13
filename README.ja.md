@@ -1,10 +1,23 @@
 # dapr sample for java
 
-### Updates
+### コンポーネントのバージョン（2026-11-13）
 
-- Update dapr verison 1.5.0 to 1.8.0
-- Update Java version 11 to 17
-- Update Spring Boot version
+| コンポーネント | バージョン |
+| --- | --- |
+| Java | 25 LTS（Microsoft Build of OpenJDK） |
+| Spring Boot | 4.1.2 |
+| Dapr Java SDK | 1.19.0 |
+| Dapr runtime / CLI | 1.19.1 |
+| Redis | 8.10.3 |
+| Zipkin | 3.6.1 |
+
+JDK 25、Maven 3.6.3 以降、Docker Compose v2 以降を使用します。
+Maven 自体が別の JDK で動いていても、Maven Toolchains がインストール済みの JDK 25 をビルド・テスト用に自動選択します。
+標準外の場所にインストールしている場合は、`JAVA25_HOME` を JDK 25 のインストール先に設定してください。
+ローカル実行時は、`java -version` が Java 25 を表示することを確認してください。
+Java のコンテナイメージは Microsoft OpenJDK 25 の最新パッチに追従します。
+Redis が JSON に対応していても従来の Hash 形式を維持するため、状態保存時の `contentType` メタデータを省略しています。
+既存のカウントデータを移行せず、同じ形式で読み書きできます。
 
 
 ## 概要
@@ -19,26 +32,20 @@
 
 ## Dapr
 
-Dapr CLI をインストールする。
+Dapr CLI 1.19.1 をインストールする。
 
 [Install the Dapr CLI | Dapr Docs](https://docs.dapr.io/getting-started/install-dapr-cli/)
 
-環境を再設定するときは、アンインストールしてから初期化する。
+サンプルに合わせたバージョンでローカルの Dapr runtime を初期化する。
+Docker Compose で実行する場合は専用のサイドカーを起動するため、`dapr init` は不要。
 
 ```sh
-dapr unisntall --all
-dapr init
+dapr init --runtime-version 1.19.1
 ```
 
-`docker ps` して、以下が表示されれば問題なし。
-
-```sh
-$ docker ps
-CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                    PORTS                              NAMES
-be8a72b20325   daprio/dapr:1.5.0   "./placement"            14 seconds ago   Up 13 seconds             0.0.0.0:50005->50005/tcp           dapr_placement
-6f683eb77d97   redis               "docker-entrypoint.s…"   14 seconds ago   Up 12 seconds             0.0.0.0:6379->6379/tcp             dapr_redis
-0c08eafb6574   openzipkin/zipkin   "start-zipkin"           14 seconds ago   Up 12 seconds (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
-```
+`dapr --version` で CLI / runtime のバージョン、`docker ps` で関連コンテナの起動を確認する。
+上表の Redis / Zipkin のバージョンは `docker-compose.yml` で固定している。
+`dapr init` が起動するインフラ用イメージは別途 Dapr CLI が管理する。
 
 ## ローカル実行
 
@@ -50,7 +57,7 @@ be8a72b20325   daprio/dapr:1.5.0   "./placement"            14 seconds ago   Up 
 
 ```
 dapr run --app-id frontend --app-port 8080 --dapr-http-port 3500 \
-  --components-path ./frontend/components \
+  --resources-path ./frontend/components \
   -- java -jar frontend/target/frontend-0.0.1-SNAPSHOT.jar com.example.dapr.frontend.FrontEndApplication --server.port=8080
 ```
 
@@ -58,15 +65,30 @@ dapr run --app-id frontend --app-port 8080 --dapr-http-port 3500 \
 
 ```
 dapr run --app-id backend --app-port 8888 --dapr-http-port 3501 \
-  --components-path ./backend/components/dev \
+  --resources-path ./backend/components/dev \
   -- java -jar backend/target/backend-0.0.1-SNAPSHOT.jar com.example.dapr.backend.BackEndApplication --server.port=8888
+```
+
+起動後、以下で呼び出す。
+
+```sh
+curl 'http://localhost:8080/test?name=dapr'
+```
+
+## Docker Compose で実行
+
+```sh
+make all build-local
+docker compose up -d
+curl 'http://localhost:8080/test?name=dapr'
+docker compose down
 ```
 
 ## Container App
 
 ### コンテナイメージのビルド
 
-1. `docker-compose.yml` でイメージ名は適当に変更し、`make all images` し、自分のコンテナレジストリに登録する。
+1. `docker-compose.yml` と `Makefile` の両方でイメージ名を変更し、`make all build-local` でビルドする。
 2. Azure Container Registry なら、`az acr login --name myregistry` でログイン後、`make push` する。
 
 ### 実行
