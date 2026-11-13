@@ -2,12 +2,26 @@
 
 [日本語 (Japanese)](./README.ja.md)
 
-### Updates 2025-03-25
+### Component versions (2026-11-13)
 
-- Update dapr verison 1.15
-- Update Java version 17 to 21
-- Update Spring Boot version
-- Update dependencies
+| Component | Version |
+| --- | --- |
+| Java | 25 LTS (Microsoft Build of OpenJDK) |
+| Spring Boot | 4.1.2 |
+| Dapr Java SDK | 1.19.0 |
+| Dapr runtime / CLI | 1.19.1 |
+| Redis | 8.10.3 |
+| Zipkin | 3.6.1 |
+
+Use JDK 25, Maven 3.6.3 or later, and Docker Compose v2 or later.
+Maven Toolchains automatically selects an installed JDK 25 for compilation and tests,
+even when Maven itself uses another JDK. If your JDK 25 is installed in a non-standard
+location, set `JAVA25_HOME` to its installation directory.
+For local execution, check that `java -version` reports Java 25.
+The Java container image tracks the latest patch release of Microsoft OpenJDK 25.
+State writes omit `contentType` metadata to keep the existing Redis Hash format,
+even when Redis supports JSON. This keeps state reads and writes compatible
+without migrating existing counters.
 
 ## Intro
 
@@ -21,27 +35,21 @@ This is a simple sample that receives HTTP communication from outside the compan
 
 ## Dapr
 
-Install Dapr CLI.
+Install Dapr CLI 1.19.1.
 
 [Install the Dapr CLI | Dapr Docs](https://docs.dapr.io/getting-started/install-dapr-cli/)
 
-When reconfiguring the environment, uninstall and then initialize.
+Initialize the local Dapr runtime with the version used by this sample.
+Docker Compose runs its own sidecars and does not require `dapr init`.
 
 ```sh
-dapr unisntall --all
-dapr init
+dapr init --runtime-version 1.19.1
 ```
 
-Do a `docker ps` and if you see the following, you are good to go.
-
-
-```sh
-$ docker ps
-CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                    PORTS                              NAMES
-be8a72b20325   daprio/dapr:1.5.0   "./placement"            14 seconds ago   Up 13 seconds             0.0.0.0:50005->50005/tcp           dapr_placement
-6f683eb77d97   redis               "docker-entrypoint.s…"   14 seconds ago   Up 12 seconds             0.0.0.0:6379->6379/tcp             dapr_redis
-0c08eafb6574   openzipkin/zipkin   "start-zipkin"           14 seconds ago   Up 12 seconds (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
-```
+Check the installed CLI/runtime versions with `dapr --version` and the running
+Dapr infrastructure containers with `docker ps`. The Redis and Zipkin versions
+in the table above are pinned in `docker-compose.yml`; `dapr init` manages its
+own infrastructure images.
 
 ## Local execution
 
@@ -55,7 +63,7 @@ The scripts are as follows, respectively.
 
 ```
 dapr run --app-id frontend --app-port 8080 --dapr-http-port 3500 \
-  --components-path ./frontend/components \
+  --resources-path ./frontend/components \
   -- java -jar frontend/target/frontend-0.0.1-SNAPSHOT.jar com.example.dapr.frontend.FrontEndApplication --server.port=8080
 ```
 
@@ -63,22 +71,22 @@ dapr run --app-id frontend --app-port 8080 --dapr-http-port 3500 \
 
 ```
 dapr run --app-id backend --app-port 8888 --dapr-http-port 3501 \
-  --components-path ./backend/components/dev \
+  --resources-path ./backend/components/dev \
   -- java -jar backend/target/backend-0.0.1-SNAPSHOT.jar com.example.dapr.backend.BackEndApplication --server.port=8888
 ```
 
 **run locally**
 
 ```zsh
-curl http://localhost:8080/test?name=dapr
+curl 'http://localhost:8080/test?name=dapr'
 ```
 
 ## Run in Docker Compose
 
 ```sh
-make build-local
+make all build-local
 docker compose up -d
-curl http://localhost:8080/test?name=dapr
+curl 'http://localhost:8080/test?name=dapr'
 docker compose down
 ```
 
@@ -86,7 +94,7 @@ docker compose down
 
 ### Build container images
 
-1. Rename the image in `docker-compose.yml` appropriately and build the image with `make all images`. Then, register it in your container registry.
+1. Set your image names in both `docker-compose.yml` and `Makefile`, then build with `make all build-local`.
 2. For Azure Container Registry, login with `az acr login --name myregistry` and `make push`.
 
 ### Execution
